@@ -51,15 +51,12 @@ class ReflexAgent(Agent):
     def evaluationFunction(self, currentGameState, action):
         """
         Design a better evaluation function here.
-
         The evaluation function takes in the current and proposed child
         GameStates (pacman.py) and returns a number, where higher numbers are better.
-
         The code below extracts some useful information from the state, like the
         remaining food (newFood) and Pacman position after moving (newPos).
         newScaredTimes holds the number of moves that each ghost will remain
         scared because of Pacman having eaten a power pellet.
-
         Print out these variables to see what you're getting, then combine them
         to create a masterful evaluation function.
         """
@@ -79,7 +76,7 @@ def scoreEvaluationFunction(currentGameState):
     This evaluation function is meant for use with adversarial search agents
     (not reflex agents).
     """
-    return currentGameState.getScore()
+    return betterEvaluationFunction(currentGameState)
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -196,7 +193,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                     if ActionScore > BestScore:
                         BestScore = ActionScore
                         BestAction = action
-                else:           # Min
+                else:           # expected value 
                     BestScore += ActionScore
                     BestAction = action
 
@@ -212,18 +209,47 @@ def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (part1-3).
-
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
     # Begin your code
-    util.raiseNotDefined()
+    pacmanPos = currentGameState.getPacmanPosition()
+    ghostsPos = currentGameState.getGhostPositions()
+    GhostStates = currentGameState.getGhostStates()
+    ScaredTimes = [ghostState.scaredTimer for ghostState in GhostStates]
+    Foods = currentGameState.getFood().asList()
+    score = currentGameState.getScore()
+
+    
+
+    # Find all food distance
+    FoodsDistance = [manhattanDistance(pacmanPos, Pos) for Pos in Foods]
+    # if have food , get the distance from nearlest food
+    MinDisFood = 1
+    if len(Foods) > 0:
+        MinDisFood = min(FoodsDistance)
+
+    # Find distances from pacman to ghost
+    MinDisghost = 100000
+    for ghost_position in ghostsPos:
+        MinDisghost = min(MinDisghost, manhattanDistance(pacmanPos, ghost_position))
+
+    # if ghost is so closed, we cant eat food
+    if MinDisghost < 2:
+        MinDisFood = 100000
+
+    # if all ghost scare now, add 50 score to this state
+    ScareScore = 50 if min(ScaredTimes) > 0 else 0
+
+    # Final Score we will return
+    FinalScore = 1.0 / (MinDisFood*10) + score*200 + len(Foods)*(-100) + ScareScore
+    return FinalScore
+
+
     # End your code
 
 # Abbreviation
 """
 If you complete this part, please replace scoreEvaluationFunction with betterEvaluationFunction ! !
 """
-better = scoreEvaluationFunction # betterEvaluationFunction or scoreEvaluationFunction
-
-
+better = betterEvaluationFunction # betterEvaluationFunction or scoreEvaluationFunction
