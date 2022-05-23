@@ -1,6 +1,8 @@
 # Introduction-to-AI
 NYCU 110(Spring) Introduction to Artificial Intelligence 彭文志教授
 
+各資料夾中的 spec 為該次作業的requirements
+
 ## HW0 Warmup
 - python practice
 - cv2 practice
