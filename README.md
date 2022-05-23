@@ -18,3 +18,8 @@ NYCU 110(Spring) Introduction to Artificial Intelligence 彭文志教授
 - Expectimax Algorithm
 - MDP and Value Iteration
 - Q-learning Algortihm
+
+## HW4 Explanable AI (XAI)
+- LIME
+- SHAP
+- Attack NLP
